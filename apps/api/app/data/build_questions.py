@@ -1,0 +1,282 @@
+"""
+Curated question bank metadata with difficulty, category, topics, and external reference links.
+Zero proprietary leaked content - legitimate public problem patterns.
+"""
+import json
+from pathlib import Path
+
+CURATED_QUESTIONS = [
+    # --- DSA & Coding ---
+    {
+        "id": "q_dsa_1",
+        "title": "Two Sum / Pair Sum Optimization",
+        "category": "DSA",
+        "difficulty": "Easy",
+        "topic": "Arrays & Hash Tables",
+        "priority": "High Priority",
+        "source": "LeetCode #1",
+        "source_url": "https://leetcode.com/problems/two-sum/",
+        "description": "Find indices of two numbers in an array that add up to a target value in O(n) time.",
+        "key_concepts": ["Hash Map lookup", "One-pass vs Two-pass", "Space-Time Tradeoff"],
+        "companies": ["google", "amazon", "microsoft", "meta", "apple", "flipkart", "uber", "goldman-sachs", "razorpay"]
+    },
+    {
+        "id": "q_dsa_2",
+        "title": "LRU Cache Design & Implementation",
+        "category": "DSA",
+        "difficulty": "Medium",
+        "topic": "Design & Linked Lists",
+        "priority": "High Priority",
+        "source": "LeetCode #146",
+        "source_url": "https://leetcode.com/problems/lru-cache/",
+        "description": "Design a data structure that follows the constraints of a Least Recently Used (LRU) cache with O(1) get and put operations.",
+        "key_concepts": ["Doubly Linked List", "Hash Map", "O(1) Eviction", "Thread Safety"],
+        "companies": ["google", "amazon", "microsoft", "meta", "apple", "bloomberg", "uber", "swiggy", "goldman-sachs"]
+    },
+    {
+        "id": "q_dsa_3",
+        "title": "Merge k Sorted Lists",
+        "category": "DSA",
+        "difficulty": "Hard",
+        "topic": "Heaps & Divide and Conquer",
+        "priority": "High Priority",
+        "source": "LeetCode #23",
+        "source_url": "https://leetcode.com/problems/merge-k-sorted-lists/",
+        "description": "Merge k sorted linked lists and return it as one sorted list.",
+        "key_concepts": ["Min-Heap / PriorityQueue", "Divide and Conquer", "O(N log k) complexity"],
+        "companies": ["google", "amazon", "meta", "microsoft", "uber", "oracle", "flipkart"]
+    },
+    {
+        "id": "q_dsa_4",
+        "title": "Number of Islands / Connected Components",
+        "category": "DSA",
+        "difficulty": "Medium",
+        "topic": "Graph BFS / DFS",
+        "priority": "High Priority",
+        "source": "LeetCode #200",
+        "source_url": "https://leetcode.com/problems/number-of-islands/",
+        "description": "Given an m x n 2D binary grid, count the number of distinct islands using graph traversal.",
+        "key_concepts": ["Depth-First Search", "Breadth-First Search", "Disjoint Set Union (Union-Find)"],
+        "companies": ["amazon", "google", "microsoft", "meta", "bloomberg", "atlassian", "swiggy"]
+    },
+    {
+        "id": "q_dsa_5",
+        "title": "Longest Substring Without Repeating Characters",
+        "category": "DSA",
+        "difficulty": "Medium",
+        "topic": "Sliding Window & Hash Sets",
+        "priority": "High Priority",
+        "source": "LeetCode #3",
+        "source_url": "https://leetcode.com/problems/longest-substring-without-repeating-characters/",
+        "description": "Find the length of the longest substring without repeating characters using a sliding window.",
+        "key_concepts": ["Sliding Window", "Two Pointers", "Hash Map character index tracking"],
+        "companies": ["amazon", "microsoft", "google", "meta", "adobe", "salesforce", "phonepe"]
+    },
+    {
+        "id": "q_dsa_6",
+        "title": "Course Schedule & Dependency Resolution (Cycle Detection)",
+        "category": "DSA",
+        "difficulty": "Medium",
+        "topic": "Topological Sort & Graphs",
+        "priority": "High Priority",
+        "source": "LeetCode #207",
+        "source_url": "https://leetcode.com/problems/course-schedule/",
+        "description": "Determine if you can finish all courses given prerequisite dependencies using Kahn's algorithm or DFS cycle detection.",
+        "key_concepts": ["Topological Sort", "In-degree array", "Directed Graph Cycles"],
+        "companies": ["google", "amazon", "microsoft", "uber", "atlassian", "flipkart", "razorpay"]
+    },
+    {
+        "id": "q_dsa_7",
+        "title": "Trapping Rain Water",
+        "category": "DSA",
+        "difficulty": "Hard",
+        "topic": "Two Pointers & Monotonic Stack",
+        "priority": "High Priority",
+        "source": "LeetCode #42",
+        "source_url": "https://leetcode.com/problems/trapping-rain-water/",
+        "description": "Calculate how much water can be trapped between elevation map bars after raining.",
+        "key_concepts": ["Two Pointers", "Monotonic Stack", "Dynamic Programming"],
+        "companies": ["google", "amazon", "goldman-sachs", "meta", "adobe", "swiggy", "flipkart"]
+    },
+    {
+        "id": "q_dsa_8",
+        "title": "Word Search II & Trie Matrix Search",
+        "category": "DSA",
+        "difficulty": "Hard",
+        "topic": "Trie & Backtracking",
+        "priority": "Medium Priority",
+        "source": "LeetCode #212",
+        "source_url": "https://leetcode.com/problems/word-search-ii/",
+        "description": "Find all words from a dictionary present on a 2D board of characters using a prefix tree (Trie) and backtracking.",
+        "key_concepts": ["Prefix Tree (Trie)", "Backtracking DFS", "Matrix Pruning"],
+        "companies": ["google", "amazon", "microsoft", "uber", "netflix", "salesforce"]
+    },
+
+    # --- System Design ---
+    {
+        "id": "q_sd_1",
+        "title": "Design a Scalable URL Shortener (TinyURL)",
+        "category": "System Design",
+        "difficulty": "Medium",
+        "topic": "Distributed Storage & Hash Generation",
+        "priority": "High Priority",
+        "source": "System Design Primer",
+        "source_url": "https://github.com/donnemartin/system-design-primer",
+        "description": "Design a high-throughput URL shortening service capable of handling billions of redirects per day with sub-millisecond latency.",
+        "key_concepts": ["Base62 encoding", "Distributed ID generation (Snowflake)", "Read-heavy caching (Redis)", "Database partitioning"],
+        "companies": ["google", "amazon", "microsoft", "meta", "uber", "atlassian", "flipkart", "razorpay"]
+    },
+    {
+        "id": "q_sd_2",
+        "title": "Design a Distributed Rate Limiter",
+        "category": "System Design",
+        "difficulty": "Medium",
+        "topic": "Concurrency & API Gateways",
+        "priority": "High Priority",
+        "source": "System Design Primer",
+        "source_url": "https://github.com/donnemartin/system-design-primer",
+        "description": "Design an API rate limiter deployed across global edge points to prevent denial-of-service and abuse.",
+        "key_concepts": ["Token Bucket vs Leaky Bucket", "Sliding Window Log", "Redis atomic operations", "Race condition mitigation"],
+        "companies": ["stripe", "cloudflare", "amazon", "google", "uber", "razorpay", "phonepe", "twilio"]
+    },
+    {
+        "id": "q_sd_3",
+        "title": "Design a Real-Time Ride Matching System (Uber / Lyft)",
+        "category": "System Design",
+        "difficulty": "Hard",
+        "topic": "Geospatial Indexing & WebSockets",
+        "priority": "High Priority",
+        "source": "Public Engineering Architecture Reports",
+        "source_url": "https://www.uber.com/en-IN/blog/engineering/",
+        "description": "Design a real-time dispatch system matching riders with nearby available drivers with high location update frequency.",
+        "key_concepts": ["Geohashing & Uber H3 spatial index", "WebSocket state streams", "QuadTrees", "Event Sourcing"],
+        "companies": ["uber", "lyft", "swiggy", "zomato", "ola", "zepto", "grab"]
+    },
+    {
+        "id": "q_sd_4",
+        "title": "Design a High-Throughput Notification Service",
+        "category": "System Design",
+        "difficulty": "Medium",
+        "topic": "Message Queues & Fanout",
+        "priority": "High Priority",
+        "source": "Engineering Design Patterns",
+        "source_url": "https://aws.amazon.com/architecture/",
+        "description": "Design a multi-channel notification engine (Push, SMS, Email) delivering millions of messages with idempotency and rate controls.",
+        "key_concepts": ["Kafka / RabbitMQ topic queues", "Retry with exponential backoff", "Dead Letter Queues", "Vendor fallback switching"],
+        "companies": ["amazon", "meta", "netflix", "swiggy", "flipkart", "freshworks", "zoho"]
+    },
+    {
+        "id": "q_sd_5",
+        "title": "Design a Distributed Payment Processing Ledger",
+        "category": "System Design",
+        "difficulty": "Hard",
+        "topic": "Financial Consistency & Transactions",
+        "priority": "High Priority",
+        "source": "Stripe Engineering Blog",
+        "source_url": "https://stripe.com/blog/engineering",
+        "description": "Design an idempotent double-entry ledger system handling online payment capture, authorization, and refunds without double-spend.",
+        "key_concepts": ["Idempotency keys", "Two-Phase Commit / Saga Pattern", "ACID transactions", "Audit trails", "Distributed locking"],
+        "companies": ["stripe", "razorpay", "phonepe", "paypal", "goldman-sachs", "jpmorgan-chase", "visa", "mastercard"]
+    },
+    {
+        "id": "q_sd_6",
+        "title": "Design a Video Streaming Architecture (Netflix / YouTube)",
+        "category": "System Design",
+        "difficulty": "Hard",
+        "topic": "Content Delivery Networks & Transcoding",
+        "priority": "High Priority",
+        "source": "Netflix Tech Blog",
+        "source_url": "https://netflixtechblog.com/",
+        "description": "Design an adaptive bitrate video streaming infrastructure supporting multi-device playback and global caching.",
+        "key_concepts": ["HLS/DASH chunking", "Distributed CDN PoPs", "Asynchronous transcoding pipelines", "Metadata microservices"],
+        "companies": ["netflix", "google", "meta", "amazon", "disney", "spotify"]
+    },
+
+    # --- Behavioral & Leadership ---
+    {
+        "id": "q_beh_1",
+        "title": "Describe a time you navigated technical disagreement with a peer or lead.",
+        "category": "Behavioral",
+        "difficulty": "Medium",
+        "topic": "Collaboration & Disagree and Commit",
+        "priority": "High Priority",
+        "source": "Amazon Leadership Principles & Google Hiring Guidance",
+        "source_url": "https://amazon.jobs/content/en/how-we-hire/interviewing-at-amazon",
+        "description": "Demonstrate how you evaluate technical trade-offs objectively using data and build alignment without personal friction.",
+        "key_concepts": ["STAR Method (Situation, Task, Action, Result)", "Objective Data Benchmarks", "Constructive Conflict", "Alignment"],
+        "companies": ["amazon", "google", "microsoft", "meta", "apple", "atlassian", "salesforce", "flipkart"]
+    },
+    {
+        "id": "q_beh_2",
+        "title": "Tell me about a complex project that was running behind schedule or faced failure.",
+        "category": "Behavioral",
+        "difficulty": "Medium",
+        "topic": "Ownership & Deliver Results",
+        "priority": "High Priority",
+        "source": "Engineering Leadership Benchmarks",
+        "source_url": "https://careers.google.com/how-we-hire/",
+        "description": "Discuss how you identified risks, communicated proactively with stakeholders, and prioritized scope to deliver high-impact value.",
+        "key_concepts": ["Risk Assessment", "Scope Prioritization", "Stakeholder Communication", "Post-mortem Learnings"],
+        "companies": ["amazon", "google", "microsoft", "uber", "swiggy", "goldman-sachs", "jpmorgan-chase"]
+    },
+    {
+        "id": "q_beh_3",
+        "title": "Describe a production outage or critical bug you resolved under pressure.",
+        "category": "Behavioral",
+        "difficulty": "High",
+        "topic": "Operational Excellence & Root Cause Analysis",
+        "priority": "High Priority",
+        "source": "SRE & Production Engineering Guidelines",
+        "source_url": "https://sre.google/sre-book/table-of-contents/",
+        "description": "Walk through how you stabilized the service, triaged the root cause, communicated status, and implemented preventative guardrails.",
+        "key_concepts": ["Incident Response", "Observability & Log Triage", "5 Whys Root Cause Analysis", "Automated Regression Tests"],
+        "companies": ["google", "netflix", "meta", "datadog", "stripe", "razorpay", "phonepe", "amazon"]
+    },
+    {
+        "id": "q_beh_4",
+        "title": "Tell me about an initiative where you simplified an overly complex codebase or system.",
+        "category": "Behavioral",
+        "difficulty": "Medium",
+        "topic": "Invent & Simplify / Craftsmanship",
+        "priority": "Recommended",
+        "source": "Software Craftsmanship Principles",
+        "source_url": "https://martinfowler.com/articles/refactoring.html",
+        "description": "Explain how you eliminated technical debt, improved developer ergonomics, and boosted execution velocity.",
+        "key_concepts": ["Modular Refactoring", "Performance Profiling", "Documentation", "Team Enablement"],
+        "companies": ["atlassian", "microsoft", "hubspot", "adobe", "freshworks", "zoho", "airbnb"]
+    },
+
+    # --- Role-Specific & Practical Engineering ---
+    {
+        "id": "q_role_1",
+        "title": "Explain Database Indexing Internals: B-Trees vs LSM-Trees",
+        "category": "Role-Specific",
+        "difficulty": "Medium",
+        "topic": "Databases & Storage Engines",
+        "priority": "High Priority",
+        "source": "Designing Data-Intensive Applications",
+        "source_url": "https://dataintensive.net/",
+        "description": "Contrast read-heavy B-Tree architectures (PostgreSQL/MySQL) against write-optimized Log-Structured Merge Trees (Cassandra/RocksDB).",
+        "key_concepts": ["Disk I/O & Page Size", "Write Amplification", "Compaction Strategies", "Point Lookups vs Range Scans"],
+        "companies": ["oracle", "snowflake", "mongodb", "amazon", "google", "meta", "uber", "salesforce"]
+    },
+    {
+        "id": "q_role_2",
+        "title": "Microservices Communication: Synchronous REST/gRPC vs Event-Driven Pub/Sub",
+        "category": "Role-Specific",
+        "difficulty": "Medium",
+        "topic": "Distributed Architecture",
+        "priority": "High Priority",
+        "source": "Cloud Native Architecture Guidelines",
+        "source_url": "https://www.cncf.io/",
+        "description": "When should you choose Protobuf gRPC over REST, and when is an asynchronous event-driven model (Kafka) strictly superior?",
+        "key_concepts": ["Network Latency & Binary Serialization", "Temporal Decoupling", "Backpressure Handling", "Eventual Consistency"],
+        "companies": ["amazon", "uber", "netflix", "swiggy", "flipkart", "razorpay", "phonepe", "atlassian"]
+    }
+]
+
+out_path = Path(__file__).parent / "company_questions.json"
+with open(out_path, "w", encoding="utf-8") as f:
+    json.dump(CURATED_QUESTIONS, f, indent=2)
+
+print(f"Successfully generated {len(CURATED_QUESTIONS)} curated question bank templates in {out_path}")

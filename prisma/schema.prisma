@@ -1,0 +1,334 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CANDIDATE
+  RECRUITER
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  role      Role     @default(CANDIDATE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile       Profile?
+  applications  JobApplication[]
+  notifications Notification[]
+  auditLogs     AuditLog[]
+  jobsPosted    Job[]            @relation("RecruiterJobs")
+
+  @@index([role])
+}
+
+model Profile {
+  id             String   @id @default(cuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName       String
+  headline       String?
+  location       String?
+  yearsExperience Float   @default(0)
+  currentRole    String?
+  targetRole     String?
+  salaryMin      Int?
+  salaryMax      Int?
+  remotePref     Boolean  @default(false)
+  profileStrength Int     @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  resumes         Resume[]
+  experiences     Experience[]
+  education       Education[]
+  projects        Project[]
+  certifications  Certification[]
+  candidateSkills CandidateSkill[]
+  careerPaths     CareerPath[]
+  learningPaths   LearningPath[]
+  assessments     Assessment[]
+  githubEvidence  GitHubEvidence[]
+  savedJobs       SavedJob[]
+}
+
+model Resume {
+  id         String   @id @default(cuid())
+  profileId  String
+  profile    Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  fileName   String
+  filePath   String
+  rawText    String?
+  atsScore   Int?
+  createdAt  DateTime @default(now())
+
+  @@index([profileId])
+}
+
+model Experience {
+  id          String    @id @default(cuid())
+  profileId   String
+  profile     Profile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  title       String
+  company     String
+  location    String?
+  startDate   DateTime?
+  endDate     DateTime?
+  isCurrent   Boolean   @default(false)
+  description String?
+
+  @@index([profileId])
+}
+
+model Education {
+  id        String   @id @default(cuid())
+  profileId String
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  degree    String
+  field     String?
+  school    String
+  startYear Int?
+  endYear   Int?
+
+  @@index([profileId])
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  profileId   String
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  url         String?
+  skillsUsed  String[]
+
+  @@index([profileId])
+}
+
+model Certification {
+  id        String   @id @default(cuid())
+  profileId String
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  name      String
+  issuer    String?
+  year      Int?
+
+  @@index([profileId])
+}
+
+model Skill {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  category    String?
+  escoId      String?
+  synonyms    String[]
+  marketDemand Float   @default(0)
+
+  candidateSkills CandidateSkill[]
+  jobSkills       JobSkill[]
+
+  @@index([category])
+}
+
+model CandidateSkill {
+  id           String   @id @default(cuid())
+  profileId    String
+  profile      Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  skillId      String
+  skill        Skill    @relation(fields: [skillId], references: [id])
+  proficiency  Float    @default(0)
+  evidenceType String?
+  verified     Boolean  @default(false)
+
+  @@unique([profileId, skillId])
+  @@index([skillId])
+}
+
+model Job {
+  id           String   @id @default(cuid())
+  title        String
+  company      String
+  location     String?
+  remote       Boolean  @default(false)
+  description  String
+  salaryMin    Int?
+  salaryMax    Int?
+  seniority    String?
+  source       String   @default("mock")
+  embeddingId  String?
+  postedById   String?
+  postedBy     User?    @relation("RecruiterJobs", fields: [postedById], references: [id])
+  createdAt    DateTime @default(now())
+
+  jobSkills    JobSkill[]
+  applications JobApplication[]
+  matchResults MatchResult[]
+  savedBy      SavedJob[]
+
+  @@index([title])
+  @@index([company])
+}
+
+model JobSkill {
+  id        String  @id @default(cuid())
+  jobId     String
+  job       Job     @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  skillId   String
+  skill     Skill   @relation(fields: [skillId], references: [id])
+  required  Boolean @default(true)
+  minLevel  Float   @default(0)
+
+  @@unique([jobId, skillId])
+}
+
+model JobApplication {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  status    String   @default("APPLIED")
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([jobId])
+}
+
+model SavedJob {
+  id        String   @id @default(cuid())
+  profileId String
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([profileId, jobId])
+}
+
+model MatchResult {
+  id          String   @id @default(cuid())
+  profileId   String
+  jobId       String
+  job         Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  score       Float
+  semanticSim Float
+  skillCoverage Float
+  explanation Json
+  createdAt   DateTime @default(now())
+
+  @@index([profileId])
+  @@index([jobId])
+}
+
+model SkillGap {
+  id          String   @id @default(cuid())
+  profileId   String
+  targetRole  String
+  skillId     String
+  currentLevel Float
+  requiredLevel Float
+  gap         Float
+  importance  String
+  createdAt   DateTime @default(now())
+
+  @@index([profileId])
+}
+
+model CareerPath {
+  id           String   @id @default(cuid())
+  profileId    String
+  profile      Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  fromRole     String
+  toRole       String
+  stage        Int
+  readiness    Float
+  missingSkills String[]
+  createdAt    DateTime @default(now())
+
+  @@index([profileId])
+}
+
+model LearningPath {
+  id          String   @id @default(cuid())
+  profileId   String
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  skillName   String
+  objective   String
+  estimatedHours Int
+  resources   Json
+  createdAt   DateTime @default(now())
+
+  @@index([profileId])
+}
+
+model Assessment {
+  id          String   @id @default(cuid())
+  profileId   String
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  targetRole  String
+  questions   Json
+  createdAt   DateTime @default(now())
+
+  results AssessmentResult[]
+}
+
+model AssessmentResult {
+  id           String     @id @default(cuid())
+  assessmentId String
+  assessment   Assessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  score        Float
+  breakdown    Json
+  createdAt    DateTime   @default(now())
+}
+
+model GitHubEvidence {
+  id          String   @id @default(cuid())
+  profileId   String
+  profile     Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  username    String
+  repoData    Json
+  skillMap    Json
+  createdAt   DateTime @default(now())
+}
+
+model MarketSnapshot {
+  id         String   @id @default(cuid())
+  skillName  String
+  demandScore Float
+  jobCount   Int
+  region     String?
+  capturedAt DateTime @default(now())
+
+  @@index([skillName])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
