@@ -1,3 +1,6 @@
+import json
+from typing import Any
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -14,7 +17,6 @@ class Settings(BaseSettings):
     openrouter_base_url: str = "https://openrouter.ai/api/v1"
     openrouter_model: str = "poolside/laguna-xs-2.1:free"
 
-
     github_token: str | None = None
     s3_endpoint: str | None = None
     clerk_secret_key: str | None = None
@@ -26,6 +28,18 @@ class Settings(BaseSettings):
     adzuna_app_id: str | None = None
     adzuna_app_key: str | None = None
     cors_origins: list[str] = ["http://localhost:3000"]
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, v: Any) -> list[str]:
+        if isinstance(v, str):
+            if v.startswith("[") and v.endswith("]"):
+                try:
+                    return json.loads(v)
+                except Exception:
+                    pass
+            return [i.strip() for i in v.split(",") if i.strip()]
+        return v
 
     class Config:
         env_file = ".env"
