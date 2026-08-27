@@ -27,19 +27,25 @@ class Settings(BaseSettings):
     affinda_document_type: str | None = None
     adzuna_app_id: str | None = None
     adzuna_app_key: str | None = None
-    cors_origins: list[str] = ["http://localhost:3000"]
+    cors_origins: Any = ["http://localhost:3000"]
 
     @field_validator("cors_origins", mode="before")
     @classmethod
     def parse_cors_origins(cls, v: Any) -> list[str]:
         if isinstance(v, str):
-            if v.startswith("[") and v.endswith("]"):
+            v_clean = v.strip()
+            if (v_clean.startswith("[") and v_clean.endswith("]")) or (v_clean.startswith("'[") and v_clean.endswith("]'")):
                 try:
-                    return json.loads(v)
+                    normalized = v_clean.strip("'").replace("'", '"')
+                    parsed = json.loads(normalized)
+                    if isinstance(parsed, list):
+                        return [str(item) for item in parsed]
                 except Exception:
                     pass
-            return [i.strip() for i in v.split(",") if i.strip()]
-        return v
+            return [i.strip("'\" ") for i in v_clean.split(",") if i.strip("'\" ")]
+        if isinstance(v, list):
+            return [str(item) for item in v]
+        return ["http://localhost:3000"]
 
     class Config:
         env_file = ".env"
