@@ -6,10 +6,40 @@ from app.main import app
 client = TestClient(app)
 
 
+def test_root():
+    r = client.get("/")
+    assert r.status_code == 200
+    assert r.json()["status"] == "online"
+
+
 def test_health():
     r = client.get("/health")
     assert r.status_code == 200
     assert r.json()["status"] == "ok"
+
+
+def test_cors_preflight_vercel():
+    r = client.options(
+        "/api/matching/run",
+        headers={
+            "Origin": "https://intellimatch-intelligent-career-gui.vercel.app",
+            "Access-Control-Request-Method": "POST",
+        },
+    )
+    assert r.status_code == 200
+    assert r.headers.get("access-control-allow-origin") == "https://intellimatch-intelligent-career-gui.vercel.app"
+
+
+def test_cors_preflight_wildcard_vercel():
+    r = client.options(
+        "/api/matching/run",
+        headers={
+            "Origin": "https://random-branch-deploy.vercel.app",
+            "Access-Control-Request-Method": "POST",
+        },
+    )
+    assert r.status_code == 200
+    assert r.headers.get("access-control-allow-origin") == "https://random-branch-deploy.vercel.app"
 
 
 def test_profile():

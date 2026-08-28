@@ -27,7 +27,12 @@ class Settings(BaseSettings):
     affinda_document_type: str | None = None
     adzuna_app_id: str | None = None
     adzuna_app_key: str | None = None
-    cors_origins: Any = ["http://localhost:3000"]
+    cors_origins: Any = [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://intellimatch-intelligent-career-gui.vercel.app",
+        "https://*.vercel.app",
+    ]
 
     @field_validator("cors_origins", mode="before")
     @classmethod
@@ -45,7 +50,12 @@ class Settings(BaseSettings):
             return [i.strip("'\" ") for i in v_clean.split(",") if i.strip("'\" ")]
         if isinstance(v, list):
             return [str(item) for item in v]
-        return ["http://localhost:3000"]
+        return [
+            "http://localhost:3000",
+            "http://localhost:5173",
+            "https://intellimatch-intelligent-career-gui.vercel.app",
+            "https://*.vercel.app",
+        ]
 
     class Config:
         env_file = ".env"
